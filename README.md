@@ -3,11 +3,6 @@
 ## Sistema de gestión de turnos para un centro de salud
 Problema que resuelve: La desorganización de turnos, citas perdidas o sobrecarga de pacientes en ciertos horarios.
 
-### Ideas de Funcionalidades posibles:
-* Registro de pacientes.
-* Gestión de médicos y especialidades.
-* Agenda de turnos disponibles y reservados.
-* Historial de citas por paciente.
 
 > Desarrolladores:
 * Iván Bürcher
@@ -26,7 +21,6 @@ Problema que resuelve: La desorganización de turnos, citas perdidas o sobrecarg
 > Repositorio:
 
 https://github.com/ARRAY-que-va/AgendAR.git
-
 
 
 > Apertura: martes, 3 junio 2025, 12:00 AM - Cierre: domingo, 8 junio 2025, 11:59 PM
@@ -48,4 +42,6 @@ Mucha suerte!!
 Consignas:
 [Proyecto ABP - Módulo Iniciación a la Programación y Bases de Datos](/Proyecto%20(ABP).pdf)
 
+## Informe
+[Estructura para el Proyecto ABP - 2025]([/Proyecto%20(ABP).pdf](https://docs.google.com/document/d/1fABywFjTY2bLATwF9FnZ46LWSGaucNV3EcIt0ZSr_aM/edit?usp=sharing))
 
