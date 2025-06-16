@@ -41,6 +41,8 @@ def login():
         print("Credenciales incorrectas.\n")
         return None
 
+# falta hacer la funcion def crear cuenta  
+
 def menu_paciente():
     while True:
         print("\n--- Menú Paciente ---")
@@ -190,5 +192,9 @@ def info_hospital():
     print("Teléfono: 08000000")
     print("Email: contacto@agendar.com.ar")
     print("Horario: Lunes a Viernes de 8:00 a 18:00 hs")
+
+# Funciones del menu Medico
+
+# Funciones del menu ADMIN    
 
 iniciar_sistema()
