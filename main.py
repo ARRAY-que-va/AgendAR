@@ -352,13 +352,124 @@ def eliminar_usuario():
     else:
         print("Eliminación cancelada.")
 
-
 def gestionar_turnos():
     print("\n--- GESTIONAR TURNOS ---")
     print("1. Crear turno")
     print("2. Modificar turno")
     print("3. Eliminar turno")
 
+def crear_turno_admin():
+    print("\n--- Crear Turno ---")
+    paciente_id = input("ID del paciente: ")
+    medico_id = input("ID del médico: ")
+    fecha = input("Fecha (YYYY-MM-DD): ")
+    hora = input("Hora (HH:MM): ")
+
+    try:
+        cursor.execute("""
+            INSERT INTO turnos (paciente_id, medico_id, fecha, hora)
+            VALUES (%s, %s, %s, %s)
+        """, (paciente_id, medico_id, fecha, hora))
+        conn.commit()
+        print("Turno creado con éxito.")
+    except mysql.connector.Error as err:
+        print("Error al crear el turno:", err)
+
+def modificar_turno():
+    print("\n--- Modificar Turno ---")
+    id_turno = input("Ingrese el ID del turno a modificar: ")
+
+    cursor.execute("""
+        SELECT fecha, hora, estado, paciente_id, medico_id 
+        FROM turnos WHERE id_turno = %s
+    """, (id_turno,))
+    turno = cursor.fetchone()
+
+    if not turno:
+        print("Turno no encontrado.")
+        return
+
+    while True:
+        print(f"""
+                Turno actual:
+                - Fecha: {turno[0]}
+                - Hora: {turno[1]}
+                - Estado: {turno[2]}
+                - ID Paciente: {turno[3]}
+                - ID Médico: {turno[4]}
+                """)
+        print("¿Qué desea modificar?")
+        print("1. Fecha")
+        print("2. Hora")
+        print("3. Estado")
+        print("4. Paciente (ID)")
+        print("5. Médico (ID)")
+        print("0. Volver")
+
+        opcion = input("Opción: ")
+
+        if opcion == "1":
+            nueva_fecha = input("Nueva fecha (YYYY-MM-DD): ")
+            cursor.execute("UPDATE turnos SET fecha = %s WHERE id_turno = %s", (nueva_fecha, id_turno))
+            conn.commit()
+            turno = (nueva_fecha, turno[1], turno[2], turno[3], turno[4])
+            print("Fecha actualizada.")
+
+        elif opcion == "2":
+            nueva_hora = input("Nueva hora (HH:MM): ")
+            cursor.execute("UPDATE turnos SET hora = %s WHERE id_turno = %s", (nueva_hora, id_turno))
+            conn.commit()
+            turno = (turno[0], nueva_hora, turno[2], turno[3], turno[4])
+            print("Hora actualizada.")
+
+        elif opcion == "3":
+            nuevo_estado = input("Nuevo estado (pendiente/confirmado/cancelado): ")
+            if nuevo_estado not in ["pendiente", "confirmado", "cancelado"]:
+                print("Estado inválido.")
+            else:
+                cursor.execute("UPDATE turnos SET estado = %s WHERE id_turno = %s", (nuevo_estado, id_turno))
+                conn.commit()
+                turno = (turno[0], turno[1], nuevo_estado, turno[3], turno[4])
+                print("Estado actualizado.")
+
+        elif opcion == "4":
+            nuevo_paciente_id = input("Nuevo ID del paciente: ")
+            cursor.execute("UPDATE turnos SET paciente_id = %s WHERE id_turno = %s", (nuevo_paciente_id, id_turno))
+            conn.commit()
+            turno = (turno[0], turno[1], turno[2], nuevo_paciente_id, turno[4])
+            print("ID del paciente actualizado.")
+
+        elif opcion == "5":
+            nuevo_medico_id = input("Nuevo ID del médico: ")
+            cursor.execute("UPDATE turnos SET medico_id = %s WHERE id_turno = %s", (nuevo_medico_id, id_turno))
+            conn.commit()
+            turno = (turno[0], turno[1], turno[2], turno[3], nuevo_medico_id)
+            print("ID del médico actualizado.")
+
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def eliminar_turno():
+    print("\n--- Eliminar Turno ---")
+    id_turno = input("ID del turno a eliminar: ")
+
+    cursor.execute("SELECT id_turno FROM turnos WHERE id_turno = %s", (id_turno,))
+    if not cursor.fetchone():
+        print("Turno no encontrado.")
+        return
+
+    confirmacion = input("¿Estás seguro de eliminar el turno? (s/n): ")
+    if confirmacion.lower() == "s":
+        try:
+            cursor.execute("DELETE FROM turnos WHERE id_turno = %s", (id_turno,))
+            conn.commit()
+            print("Turno eliminado con éxito.")
+        except mysql.connector.Error as err:
+            print("Error al eliminar el turno:", err)
+    else:
+        print("Eliminación cancelada.")
 
 def ver_todos_los_turnos():
     print("\n--- TODOS LOS TURNOS ---")
@@ -373,6 +484,5 @@ def ver_todos_los_turnos():
     for t in turnos:
             # 0 = fecha 1 = HORA 2 = ESTADO 3 = NOMBRE 4 = APELLIDO 5 = MEDICO
         print(f"{t[0]} {t[1]} | Estado: {t[2]} | Paciente: {t[3]} {t[4]} | Médico: {t[5]}")
-
 
 iniciar_sistema()
