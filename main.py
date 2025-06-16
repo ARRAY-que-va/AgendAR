@@ -18,7 +18,7 @@ def iniciar_sistema():
     if usuario:
         id_usuario, rol = usuario
         if rol == "paciente":
-            menu_paciente()
+            menu_paciente(id_usuario)
         elif rol == "medico":
             menu_medico(id_usuario)
         elif rol == "admin":
@@ -43,7 +43,7 @@ def login():
 
 # falta hacer la funcion def crear cuenta  
 
-def menu_paciente():
+def menu_paciente(id_usuario):
     while True:
         print("\n--- Menú Paciente ---")
         print("1. Sacar turno")
@@ -54,9 +54,9 @@ def menu_paciente():
 
         opcion = input("Opción: ")
         if opcion == "1":
-            registrar_turno()
+            registrar_turno(id_usuario)
         elif opcion == "2":
-            listar_turnos()
+            listar_turnos(id_usuario)
         elif opcion == "3":
             vizualizar_medicos()
         elif opcion == "4":
@@ -82,24 +82,33 @@ def menu_medico(usuario_id):
 
 def menu_admin():
     while True:
-        print("\n--- Menú Admin ---")
+        print("\n=== MENÚ ADMINISTRADOR ===")
         print("1. Gestionar Roles")
         print("2. Gestionar Usuarios")
         print("3. Ver todos los turnos")
         print("4. Gestionar Turnos")
-        print("0. Salir")
+        print("0. Cerrar sesión")
 
-        opcion = input("Opción: ")
-        if opcion == "0":
+        opcion = input("Selecciona una opción: ")
+
+        if opcion == "1":
+            gestionar_roles()
+        elif opcion == "2":
+            gestionar_usuarios()
+        elif opcion == "3":
+            ver_todos_los_turnos()
+        elif opcion == "4":
+            gestionar_turnos()
+        elif opcion == "0":
+            print("Cerrando sesión del administrador...\n")
             break
         else:
-            print(f"Funcionalidad {opcion} aún no implementada.")
-
+            print("Opción no válida. Intenta de nuevo.")
 # Funciones del menu paciente  
 
-def registrar_turno():
+def registrar_turno(id_usuario):
     print("\n--- Registro de Turno ---")
-    dni = input("DNI del paciente: ")
+    dni = id_usuario
 
     cursor.execute("SELECT id_paciente, nombre, apellido FROM pacientes WHERE dni = %s", (dni,))
     paciente = cursor.fetchone()
@@ -138,9 +147,9 @@ def registrar_turno():
     except mysql.connector.Error as err:
         print("Error al registrar el turno:", err)
 
-def listar_turnos():
+def listar_turnos(id_usuario):
     print("\n--- Mis Turnos ---")
-    dni = input("DNI del paciente: ")
+    dni = id_usuario
 
     cursor.execute("""
         SELECT p.id_paciente, p.nombre, p.apellido FROM pacientes p WHERE dni = %s
@@ -195,6 +204,175 @@ def info_hospital():
 
 # Funciones del menu Medico
 
+def ver_turnos_medico(usuario_id):
+    cursor.execute("SELECT id_medico FROM medicos WHERE usuario_id = %s", (usuario_id,))
+    medico = cursor.fetchone()
+
+    if not medico:
+        print("No se encontró al médico.")
+        return
+
+    cursor.execute("""
+        SELECT t.fecha, t.hora, t.estado, p.nombre, p.apellido
+        FROM turnos t
+        JOIN pacientes p ON t.paciente_id = p.id_paciente
+        WHERE t.medico_id = %s
+        ORDER BY t.fecha, t.hora
+    """, (medico[0],))
+
+    turnos = cursor.fetchall()
+    if not turnos:
+        print("No hay turnos asignados.")
+        return
+
+    for t in turnos:
+        # 0 = fecha 1 = HORA 2 = ESTADO 3 = NOMBRE 4 = APELLIDO
+        print(f"{t[0]} {t[1]} - Paciente: {t[3]} {t[4]} - Estado: {t[2]}")
+
 # Funciones del menu ADMIN    
+
+def gestionar_roles():
+    while True:
+        print("\n--- CAMBIAR ROL DE USUARIOS ---")
+        print("1. Ver usuarios y sus roles")
+        print("2. Cambiar rol de un usuario")
+        print("0. Volver al menú admin")
+        opcion = input("Selecciona una opción: ")
+        if opcion == "1":
+            ver_usuarios_y_roles()
+        elif opcion == "2":
+            cambiar_rol_de_usuario()
+        elif opcion == "0":
+            break
+        else:
+            print("Opción no válida. Intenta de nuevo.")
+
+def mostrar_roles():
+    cursor.execute("SELECT id_rol, nombre FROM roles")
+    roles = cursor.fetchall()
+    for r in roles:
+        print(f"ID: {r[0]} | Rol: {r[1]}")
+
+def ver_usuarios_y_roles():
+    cursor.execute("""
+        SELECT u.id_usuario, u.username, r.nombre
+        FROM usuarios u
+        JOIN roles r ON u.rol_id = r.id_rol
+    """)
+    usuarios = cursor.fetchall()
+    print("\n--- Usuarios y sus roles ---")
+    for u in usuarios:
+        print(f"ID: {u[0]} | Usuario: {u[1]} | Rol: {u[2]}")
+
+def cambiar_rol_de_usuario():
+    id_usuario = input("ID del usuario a modificar: ")
+    print("Roles disponibles:")
+    mostrar_roles()
+    nuevo_rol_id = input("Nuevo rol (ingresa el ID del rol): ")
+
+    cursor.execute("UPDATE usuarios SET rol_id = %s WHERE id_usuario = %s", (nuevo_rol_id, id_usuario))
+    print("Rol actualizado correctamente.")
+
+def gestionar_usuarios():
+    while True:
+        print("\n--- GESTIONAR USUARIOS ---")
+        print("1. Ver todos los usuarios")
+        print("2. Modificar un usuario")
+        print("3. Eliminar un usuario")
+        print("0. Volver al menú admin")
+        opcion = input("Selecciona una opción: ")
+        if opcion == "1":
+            ver_todos_los_usuarios()
+        elif opcion == "2":
+            modificar_usuario()
+        elif opcion == "3":
+            eliminar_usuario()
+        elif opcion == "0":
+            break
+        else:
+            print("Opción no válida. Intenta de nuevo.")
+
+def ver_todos_los_usuarios():
+    print("\n--- Lista de Usuarios ---")
+    cursor.execute("SELECT id_usuario, usuario, rol FROM usuarios")
+    usuarios = cursor.fetchall()
+    if not usuarios:
+        print("No hay usuarios registrados.")
+        return
+    for u in usuarios:
+        print(f"ID: {u[0]} | Usuario: {u[1]} | Rol: {u[2]}")
+
+def modificar_usuario():
+    print("\n--- Modificar Usuario ---")
+    id_usuario = input("Ingrese el ID del usuario a modificar: ")
+    cursor.execute("SELECT usuario, rol FROM usuarios WHERE id_usuario = %s", (id_usuario,))
+    usuario = cursor.fetchone()
+    if not usuario:
+        print("Usuario no encontrado.")
+        return
+    while True:
+        print(f"\nUsuario actual: {usuario[0]} | Rol actual: {usuario[1]}")
+        print("¿Qué desea modificar?")
+        print("1. Nombre de usuario")
+        print("2. Contraseña")
+        print("0. Volver")
+        opcion = input("Opción: ")
+        if opcion == "1":
+            nuevo_usuario = input("Nuevo nombre de usuario: ")
+            cursor.execute("UPDATE usuarios SET usuario = %s WHERE id_usuario = %s", (nuevo_usuario, id_usuario))
+            conn.commit()
+            print("Nombre de usuario actualizado.")
+            usuario = (nuevo_usuario, usuario[1]) 
+        elif opcion == "2":
+            nueva_contrasena = input("Nueva contraseña: ")
+            cursor.execute("UPDATE usuarios SET contraseña = %s WHERE id_usuario = %s", (nueva_contrasena, id_usuario))
+            conn.commit()
+            print("Contraseña actualizada.")
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def eliminar_usuario():
+    print("\n--- Eliminar Usuario ---")
+    id_usuario = input("Ingrese el ID del usuario a eliminar: ")
+    cursor.execute("SELECT usuario FROM usuarios WHERE id_usuario = %s", (id_usuario,))
+    usuario = cursor.fetchone()
+    if not usuario:
+        print("Usuario no encontrado.")
+        return
+    confirmacion = input(f"¿Estás seguro de eliminar al usuario '{usuario[0]}'? (s/n): ")
+    if confirmacion.lower() == "s":
+        try:
+            cursor.execute("DELETE FROM usuarios WHERE id_usuario = %s", (id_usuario,))
+            conn.commit()
+            print("Usuario eliminado con éxito.")
+        except mysql.connector.Error as err:
+            print("Error al eliminar el usuario:", err)
+    else:
+        print("Eliminación cancelada.")
+
+
+def gestionar_turnos():
+    print("\n--- GESTIONAR TURNOS ---")
+    print("1. Crear turno")
+    print("2. Modificar turno")
+    print("3. Eliminar turno")
+
+
+def ver_todos_los_turnos():
+    print("\n--- TODOS LOS TURNOS ---")
+    cursor.execute("""
+        SELECT t.fecha, t.hora, t.estado, p.nombre, p.apellido, m.nombre
+        FROM turnos t
+        JOIN pacientes p ON t.paciente_id = p.id_paciente
+        JOIN medicos m ON t.medico_id = m.id_medico
+        ORDER BY t.fecha, t.hora
+    """)
+    turnos = cursor.fetchall()
+    for t in turnos:
+            # 0 = fecha 1 = HORA 2 = ESTADO 3 = NOMBRE 4 = APELLIDO 5 = MEDICO
+        print(f"{t[0]} {t[1]} | Estado: {t[2]} | Paciente: {t[3]} {t[4]} | Médico: {t[5]}")
+
 
 iniciar_sistema()
