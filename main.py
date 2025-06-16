@@ -12,11 +12,11 @@ print("AgendAR")
 print("Un programa de Turnero \n")
 
 
-def menu_principal():
+def menu_estandar():
     while True:
         print("1. Sacar turno")
         print("2. Mis Turnos")
-        print("3. Lista de medicos")
+        print("3. Datos personales")
         print("4. Info Hospital")
         print("0. Salir")
 
@@ -35,6 +35,13 @@ def menu_principal():
             break
         else:
             print("Opción inválida. Intenta de nuevo.")
+
+def menu_admin():
+        print("1. Gestionar Roles")
+        print("2. Gestionar Usuarios")
+        print("4. Gestionar Turnos")
+        print("3. Ver todos los turnos")
+        print("0. Salir")
 
 
     def registrar_turno():

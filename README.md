@@ -8,7 +8,6 @@ Problema que resuelve: La desorganización de turnos, citas perdidas o sobrecarg
 * Iván Bürcher
 * Valen Flores
 * Juan Morales
-* Victoria Torres
 * Exequiel Vera
 * Lautaro Faure
 
@@ -43,5 +42,5 @@ Consignas:
 [Proyecto ABP - Módulo Iniciación a la Programación y Bases de Datos](/Proyecto%20(ABP).pdf)
 
 ## Informe
-[Estructura para el Proyecto ABP - 2025]([/Proyecto%20(ABP).pdf](https://docs.google.com/document/d/1fABywFjTY2bLATwF9FnZ46LWSGaucNV3EcIt0ZSr_aM/edit?usp=sharing))
+[Estructura para el Proyecto ABP - 2025]((https://docs.google.com/document/d/1fABywFjTY2bLATwF9FnZ46LWSGaucNV3EcIt0ZSr_aM/edit?usp=sharing))
 
