@@ -13,17 +13,44 @@ print("Bienvenido a")
 print("AgendAR")
 print("Un programa de Turnero \n")
 
+def iniciar_sistema():
+    usuario = login()
+    if usuario:
+        id_usuario, rol = usuario
+        if rol == "paciente":
+            menu_paciente()
+        elif rol == "medico":
+            menu_medico(id_usuario)
+        elif rol == "admin":
+            menu_admin()
+        else:
+            print("Rol desconocido.")
 
-def menu_principal():
+def login():
+    print("=== Inicio de Sesión ===")
+    usuario = input("Usuario: ")
+    contrasena = input("Contraseña: ")
+
+    cursor.execute("SELECT id_usuario, rol FROM usuarios WHERE usuario = %s AND contraseña = %s", (usuario, contrasena))
+    resultado = cursor.fetchone()
+
+    if resultado:
+        print(f"Bienvenido {usuario} - Rol: {resultado[1]}")
+        return resultado  # (id_usuario, rol)
+    else:
+        print("Credenciales incorrectas.\n")
+        return None
+
+def menu_paciente():
     while True:
+        print("\n--- Menú Paciente ---")
         print("1. Sacar turno")
         print("2. Mis Turnos")
-        print("3. Lista de medicos")
+        print("3. Lista de médicos")
         print("4. Info Hospital")
         print("0. Salir")
 
-        opcion = input("Selecciona una opción: ")
-
+        opcion = input("Opción: ")
         if opcion == "1":
             registrar_turno()
         elif opcion == "2":
@@ -33,11 +60,40 @@ def menu_principal():
         elif opcion == "4":
             info_hospital()
         elif opcion == "0":
-            print("Saliendo del sistema.")
             break
         else:
-            print("Opción inválida. Intenta de nuevo.")
+            print("Opción inválida.")
 
+def menu_medico(usuario_id):
+    while True:
+        print("\n--- Menú Médico ---")
+        print("1. Ver mis turnos")
+        print("0. Salir")
+
+        opcion = input("Opción: ")
+        if opcion == "1":
+            ver_turnos_medico(usuario_id)
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def menu_admin():
+    while True:
+        print("\n--- Menú Admin ---")
+        print("1. Gestionar Roles")
+        print("2. Gestionar Usuarios")
+        print("3. Ver todos los turnos")
+        print("4. Gestionar Turnos")
+        print("0. Salir")
+
+        opcion = input("Opción: ")
+        if opcion == "0":
+            break
+        else:
+            print(f"Funcionalidad {opcion} aún no implementada.")
+
+# Funciones del menu paciente  
 
 def registrar_turno():
     print("\n--- Registro de Turno ---")
@@ -135,6 +191,4 @@ def info_hospital():
     print("Email: contacto@agendar.com.ar")
     print("Horario: Lunes a Viernes de 8:00 a 18:00 hs")
 
-
-# Ejecutar menú
-menu_principal()
+iniciar_sistema()

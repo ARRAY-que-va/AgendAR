@@ -42,9 +42,8 @@ CREATE TABLE pacientes (
     obrasocial_id INT,
     FOREIGN KEY (obrasocial_id) REFERENCES obrasocial(id_obrasocial),
     direccion VARCHAR(100) NOT NULL,
-    pwd INT NOT NULL,
+    pwd VARCHAR(20) NOT NULL,
     usuario VARCHAR(20)
-    
 );
 
 CREATE TABLE turnos (
