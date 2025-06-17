@@ -24,11 +24,11 @@ def iniciar_sistema():
     if usuario:
         id_usuario, rol = usuario
         if rol == "paciente":
-            menu_paciente(id_usuario)
+            menus.paciente.menu_paciente(id_usuario)
         elif rol == "medico":
-            menu_medico(id_usuario)
+            menus.medico.menu_medico(id_usuario)
         elif rol == "admin":
-            menu_admin()
+            menus.admin.menu_admin()
         else:
             print("Rol desconocido.")
 
@@ -37,12 +37,12 @@ def login():
     usuario = input("Usuario: ")
     contrasena = input("Contraseña: ")
 
-    cursor.execute("SELECT id_usuario, rol FROM usuarios WHERE usuario = %s AND contraseña = %s", (usuario, contrasena))
+    cursor.execute("SELECT id_user, rol FROM user WHERE usuario = %s AND pwd = %s", (usuario, contrasena))
     resultado = cursor.fetchone()
 
     if resultado:
-        print(f"Bienvenido {usuario} - Rol: {resultado[3]}")
-        return resultado  # (id_usuario, rol)
+        print(f"Bienvenido {usuario} - Rol: {resultado[1]}")
+        return resultado  
     else:
         print("Credenciales incorrectas.\n")
         return None
