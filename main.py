@@ -1,13 +1,19 @@
 import mysql.connector
 
+import menus.paciente
+import menus.medico
+import menus.admin
+
 conn = mysql.connector.connect(
-    host="host",
-    user="user",
-    password="contraseña",
+    host="127.0.0.1",
+    user="root",
+    password="Myroot1235",
     database="agendar"
 )
-from datetime import datetime
 
+print(conn)
+
+from datetime import datetime
 cursor = conn.cursor()
 print("Bienvenido a")
 print("AgendAR")
@@ -35,16 +41,12 @@ def login():
     resultado = cursor.fetchone()
 
     if resultado:
-        print(f"Bienvenido {usuario} - Rol: {resultado[1]}")
+        print(f"Bienvenido {usuario} - Rol: {resultado[3]}")
         return resultado  # (id_usuario, rol)
     else:
         print("Credenciales incorrectas.\n")
         return None
 
 # falta hacer la funcion def crear cuenta  
-
-import paciente
-import medico
-import admin
-
 iniciar_sistema()
+

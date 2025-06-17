@@ -1,4 +1,4 @@
-import mysql.connector
+
 
 # Menu
 def menu_paciente(id_usuario):
