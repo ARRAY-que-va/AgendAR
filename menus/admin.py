@@ -24,7 +24,7 @@ def menu_admin(conn, cursor):
         else:
             print("Opción no válida. Intenta de nuevo.")
 
-
+#Poder Cambiar configuraciones de Un usuario
 def gestionar_roles(conn, cursor): 
     while True:
         print("\n--- CAMBIAR ROL DE USUARIOS ---")
@@ -40,6 +40,7 @@ def gestionar_roles(conn, cursor):
             break
         else:
             print("Opción no válida. Intenta de nuevo.")
+
 
 def mostrar_roles(cursor): 
     cursor.execute("SELECT id_rol, nombre FROM roles")
