@@ -13,6 +13,7 @@ def menu_admin(conn, cursor):
 
         if opcion == "1":
             gestionar_roles(conn, cursor) 
+        elif opcion == "2":
             gestionar_usuarios(conn, cursor) 
         elif opcion == "3":
             ver_todos_los_turnos(cursor) 
@@ -42,17 +43,12 @@ def gestionar_roles(conn, cursor):
             print("Opción no válida. Intenta de nuevo.")
 
 
-def mostrar_roles(cursor): 
-    cursor.execute("SELECT id_rol, nombre FROM roles")
-    roles = cursor.fetchall()
-    for r in roles:
-        print(f"ID: {r[0]} | Rol: {r[1]}")
+
 
 def ver_usuarios_y_roles(cursor): 
     cursor.execute("""
-        SELECT u.id_user, u.usuario, r.nombre
-        FROM user u
-        JOIN roles r ON u.rol_id = r.id_rol
+        SELECT id_user, usuario, rol
+        FROM user 
     """)
     usuarios = cursor.fetchall()
     print("\n--- Usuarios y sus roles ---")
@@ -62,10 +58,11 @@ def ver_usuarios_y_roles(cursor):
 def cambiar_rol_de_usuario(conn, cursor):
     id_usuario = input("ID del usuario a modificar: ")
     print("Roles disponibles:")
-    mostrar_roles(cursor) 
-    nuevo_rol_id = input("Nuevo rol (ingresa el ID del rol): ")
+    print("medico, paciente, admin:")
+    
+    nuevo_rol = input("Nuevo rol: ")
     try:
-        cursor.execute("UPDATE user SET rol_id = %s WHERE id_user = %s", (nuevo_rol_id, id_usuario))
+        cursor.execute("UPDATE user SET rol = %s WHERE id_user = %s", (nuevo_rol, id_usuario))
         conn.commit()
         print("Rol actualizado correctamente.")
     except Exception as e:
@@ -143,7 +140,7 @@ def modificar_usuario(conn, cursor):
 def eliminar_usuario(conn, cursor): 
     print("\n--- Eliminar Usuario ---")
     id_usuario = input("Ingrese el ID del usuario a eliminar: ")
-    cursor.execute("SELECT usuario FROM user WHERE id_user = %s", (id_usuario,))
+    cursor.execute("SELECT usuario, rol FROM user WHERE id_user = %s", (id_usuario,))
     usuario = cursor.fetchone()
     if not usuario:
         print("Usuario no encontrado.")
@@ -151,6 +148,10 @@ def eliminar_usuario(conn, cursor):
     confirmacion = input(f"¿Estás seguro de eliminar al usuario '{usuario[0]}'? (s/n): ")
     if confirmacion.lower() == "s":
         try:
+            if usuario[1] == "medico":
+                cursor.execute("DELETE FROM medico WHERE user_id = %s", (id_usuario,))
+            if usuario[1] == "paciente":
+                cursor.execute("DELETE FROM pacientes WHERE user_id = %s", (id_usuario,))
             cursor.execute("DELETE FROM user WHERE id_user = %s", (id_usuario,))
             conn.commit()
             print("Usuario eliminado con éxito.")
@@ -296,7 +297,7 @@ def eliminar_turno(conn, cursor):
 def ver_todos_los_turnos(cursor): 
     print("\n--- TODOS LOS TURNOS ---")
     cursor.execute("""
-        SELECT t.fecha, t.hora, t.estado, p.nombre, p.apellido, m.nombre
+        SELECT t.id_turno, t.fecha, t.hora, t.estado, p.nombre, p.apellido, m.nombre
         FROM turnos t
         JOIN pacientes p ON t.paciente_id = p.id_paciente
         JOIN medicos m ON t.medico_id = m.id_medico
@@ -308,4 +309,4 @@ def ver_todos_los_turnos(cursor):
         return
     for t in turnos:
             # 0 = fecha 1 = HORA 2 = ESTADO 3 = NOMBRE 4 = APELLIDO 5 = MEDICO
-        print(f"{t[0]} {t[1]} | Estado: {t[2]} | Paciente: {t[3]} {t[4]} | Médico: {t[5]}")
+        print(f"ID: {t[0]} | {t[1]} {t[2]} | Estado: {t[3]} | Paciente: {t[4]} {t[5]} | Médico: {t[6]}")

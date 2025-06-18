@@ -54,10 +54,10 @@ def registrar_turno(conn, cursor, id_usuario):
             return
         cursor.execute("""
             INSERT INTO turnos (paciente_id, medico_id, fecha, hora, estado)
-            VALUES (%s, %s, %s, %s, 'pendiente')
+            VALUES (%s, %s, %s, %s, 'reservado')
         """, (paciente[0], id_medico, fecha, hora))
         conn.commit()
-        print("Turno registrado con éxito. Estado: Pendiente.")
+        print("Turno registrado con éxito. Estado: reservado.")
     except mysql.connector.Error as err:
         print("Error al registrar el turno:", err)
         conn.rollback() # Deshacer en caso de error
@@ -92,7 +92,7 @@ def listar_turnos(cursor, id_usuario):
 def vizualizar_medicos(cursor): 
     print("\n--- Lista de Médicos ---")
     cursor.execute("""
-        SELECT m.nombre, m.apellido, m.matricula, e.nombre, c.piso, c.area, c.sala
+        SELECT m.nombre, m.apellido, m.matricula, e.nombre, c.piso, c.área, c.sala
         FROM medicos m
         JOIN especialidades e ON m.especialidad_id = e.id_especialidad
         JOIN consultorio c ON m.consultorio_id = c.id_consultorio

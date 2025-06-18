@@ -14,7 +14,7 @@ def menu_medico(conn, cursor, usuario_id):
             print("Opción inválida.")
 
 def ver_turnos_medico(cursor, usuario_id): 
-    cursor.execute("SELECT id_medico FROM medicos WHERE id_user = %s", (usuario_id,))
+    cursor.execute("SELECT id_medico FROM medicos WHERE user_id = %s", (usuario_id,))
     medico = cursor.fetchone()
     if not medico:
         print("No se encontró al médico asociado a este usuario.")

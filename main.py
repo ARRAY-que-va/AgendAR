@@ -67,7 +67,7 @@ def login():
         return None
 
 # FUNCIÓN: crear_cuenta
-def crear_usuario(conn, cursor): 
+def crear_usuario(): 
     print("\n=== Creación de Cuenta ===")
     nuevo_usuario = input("Define tu nombre de usuario: ")
     nueva_contrasena = input("Define tu contraseña: ")
