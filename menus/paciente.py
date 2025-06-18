@@ -26,8 +26,7 @@ def menu_paciente(conn, cursor, id_usuario):
 
 def registrar_turno(conn, cursor, id_usuario): 
     print("\n--- Registro de Turno ---")
-    dni = id_usuario 
-    cursor.execute("SELECT id_paciente, nombre, apellido FROM pacientes WHERE dni = %s", (dni,))
+    cursor.execute("SELECT id_paciente, nombre, apellido FROM pacientes WHERE user_id = %s", (id_usuario,))
     paciente = cursor.fetchone()
     if not paciente:
         print("Paciente no registrado en la tabla de pacientes. Por favor, contacta al administrador.")
@@ -66,12 +65,11 @@ def registrar_turno(conn, cursor, id_usuario):
         print(f"Ocurrió un error inesperado: {e}")
 
 
-def listar_turnos(cursor, id_usuario): 
+def listar_turnos(cursor, id_usuario):
     print("\n--- Mis Turnos ---")
-    dni = id_usuario
     cursor.execute("""
-        SELECT p.id_paciente, p.nombre, p.apellido FROM pacientes p WHERE dni = %s
-    """, (dni,))
+        SELECT p.id_paciente, p.nombre, p.apellido FROM pacientes p WHERE user_id = %s
+    """, (id_usuario,))
     paciente = cursor.fetchone()
     if not paciente:
         print("Paciente no registrado en la tabla de pacientes.")

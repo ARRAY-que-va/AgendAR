@@ -26,11 +26,11 @@ def iniciar_sistema():
     if usuario:
         id_usuario, rol = usuario
         if rol == "paciente":
-            menus.paciente.menu_paciente(id_usuario)
+            menus.paciente.menu_paciente(conn, cursor,id_usuario)
         elif rol == "medico":
-            menus.medico.menu_medico(id_usuario)
+            menus.medico.menu_medico(conn, cursor,id_usuario)
         elif rol == "admin":
-            menus.admin.menu_admin()
+            menus.admin.menu_admin(conn, cursor)
         else:
             print("Rol desconocido.")
 
