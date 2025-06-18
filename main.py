@@ -4,21 +4,23 @@ import menus.paciente
 import menus.medico
 import menus.admin
 
+#Coneccion con la base
 conn = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
     password="Myroot1235",
     database="agendar"
 )
-
 print(conn)
 
+#Texto de bienvenida
 from datetime import datetime
 cursor = conn.cursor()
 print("Bienvenido a")
 print("AgendAR")
 print("Un programa de Turnero \n")
 
+#Lo primero es la fucion que ve que tipo de usuario es, sin antes logear
 def iniciar_sistema():
     usuario = login()
     if usuario:
@@ -32,6 +34,7 @@ def iniciar_sistema():
         else:
             print("Rol desconocido.")
 
+#Es la fucion para  logear
 def login():
     print("=== Inicio de Sesión ===")
     usuario = input("Usuario: ")
