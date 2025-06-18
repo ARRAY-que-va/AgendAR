@@ -22,8 +22,24 @@ print("Un programa de Turnero \n")
 
 #Lo primero es la fucion que ve que tipo de usuario es, sin antes logear
 def iniciar_sistema():
-    usuario = login()
+    print("\n=== MENÚ Usuario ===")
+    print("1. Iniciar sesion")
+    print("2. Crear usuario ")
+    opcion = input("Selecciona una opción: ")
+    if opcion == "1":
+        usuario = login()
+    elif opcion == "2":
+        usuario = crear_usuario()
+        if usuario == None:
+            iniciar_sistema()
+        else:
+            print("\n=== Felicitaciones ya creaste tu cuenta ===")
+            print(" Iniciar sesion")
+        usuario = login()
+    else:
+        print("Opción no válida. Intenta de nuevo.")
     if usuario:
+
         id_usuario, rol = usuario
         if rol == "paciente":
             menus.paciente.menu_paciente(conn, cursor,id_usuario)
@@ -86,13 +102,15 @@ def crear_usuario(conn, cursor):
             """, (nombre_paciente, apellido_paciente, id_usuario_reciente, dni_paciente, None, telefono_paciente, email_paciente, obrasocial_id, direccion_paciente))
             conn.commit() 
             print("Datos de paciente guardados con éxito.")
+        return (id_usuario_reciente)
     except mysql.connector.Error as err:
         print(f"Error al crear la cuenta: {err}")
         if conn:
             conn.rollback() 
+        return (None)
     except Exception as e:
         print(f"Ocurrió un error inesperado: {e}")
+        return (None)
 
-# falta hacer la funcion def crear cuenta  
 iniciar_sistema()
 
